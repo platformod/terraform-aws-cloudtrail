@@ -1,27 +1,57 @@
-# AWS {{THING}} Terraform module
+# AWS Cloudtrail Terraform module
 
-Terraform module which creates AWS {{THING}} resources.
+Terraform module which creates AWS Cloudtrail resources.
+
+This is an opinionated tool for creating a fairly boring Cloudtrail setup.
+
+Features:
+* Multi Region Trail
+* Includes Global Events
+* Includes Management Events
+* Include Insights events
+* No Data events
+  * If you need data events, you should write another trail with specific event selectors to manage scale and cost.
 
 ## Usage
 
-See [`examples`](examples) directory for working examples to reference:
-
 ```hcl
-module "<THING>" {
-  source = "platformod/<THING>"
+# To prevent a dependency loop and pass AWS runtime validations, create 
+# the storage first, providing the computed arn of the trail to the 
+# cloudtrail_s3 module
 
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
+data "aws_caller_identity" "current" {}
+data "aws_partition" "current" {}
+data "aws_region" "current" {}
+
+locals {
+  name = "zombocom-main"
+  arn = "arn:${data.aws_partition.current}:cloudtrail:${data.aws_region.current}:${data.aws_caller_identity.account_id}:trail/${local.name}"
 }
+
+module "storage" {
+  source = "platformod/cloudtrail-s3"
+  version = 0.CHANGE_ME
+  
+  # Creates a "${local.name}-cloudtrail" bucket
+  name = local.name
+
+  account_trails = [
+    {
+      account = data.aws_caller_identity.current.account_id , 
+      arn = local.arn
+    },
+  ]
+}
+
+module "trail" {
+  source  = "platformod/cloudtrail"
+  version = 0.CHANGEME
+
+  name      = local.name
+  s3_bucket = "${local.name}-cloudtrail"
+}
+
 ```
-
-## Examples
-
-Examples codified under the [`examples`](examples) are intended to give users references for how to use the module(s) as well as testing/validating changes to the source code of the module. If contributing to the project, please be sure to make any appropriate updates to the relevant examples to allow maintainers to test your changes and to keep the examples up to date for users. Thank you!
-
-- [Complete](complete)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -52,13 +82,9 @@ No inputs.
 No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
+## Tests
 
-## Thanks
-
-Heavily inspired from the following template repos
-* https://github.com/clowdhaus/terraform-aws-module-template
-* https://github.com/trussworks/terraform-module-template
-* https://github.com/thesis/terraform-module-template-repo
+The tests in this repo will create and destroy real resources at AWS and incur cost. Please be careful when running them.
 
 ## License
 
