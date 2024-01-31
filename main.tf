@@ -2,8 +2,9 @@
 # Single trail, all management events, no data events
 
 resource "aws_cloudtrail" "trail" {
-  #checkov:skip=CKV_AWS_252:We will offworld and parse these logs someplace else, do not need SNS
+  #checkov:skip=CKV_AWS_252:Prefer S3 notifications and EventBridge over SNS
   #checkov:skip=CKV_AWS_35:These are encrypted at rest in S3
+  #checkov:skip=CKV2_AWS_10:We will offworld these to a seperte log provider, do not need CloudWatch here
 
   name           = var.name
   s3_bucket_name = var.s3_bucket
