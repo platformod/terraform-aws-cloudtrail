@@ -15,8 +15,8 @@ Features:
 ## Usage
 
 ```hcl
-# To prevent a dependency loop and pass AWS runtime validations, create 
-# the storage first, providing the computed arn of the trail to the 
+# To prevent a dependency loop and pass AWS runtime validations, create
+# the storage first, providing the computed arn of the trail to the
 # cloudtrail_s3 module
 
 data "aws_caller_identity" "current" {}
@@ -31,13 +31,13 @@ locals {
 module "storage" {
   source = "platformod/cloudtrail-s3"
   version = 0.CHANGE_ME
-  
+
   # Creates a "${local.name}-cloudtrail" bucket
   name = local.name
 
   account_trails = [
     {
-      account = data.aws_caller_identity.current.account_id , 
+      account = data.aws_caller_identity.current.account_id ,
       arn = local.arn
     },
   ]
@@ -63,7 +63,9 @@ module "trail" {
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.34.0 |
 
 ## Modules
 
@@ -71,15 +73,23 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_cloudtrail.trail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_name"></a> [name](#input\_name) | A name for the trail, ideally the same value you used for the bucket name prefix | `string` | n/a | yes |
+| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | The name od the S3 bucket you created to store the logs | `string` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_arn"></a> [arn](#output\_arn) | ARN of the trail |
+| <a name="output_home_region"></a> [home\_region](#output\_home\_region) | Region in which the trail was created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Tests
