@@ -29,7 +29,7 @@ run "bucket" {
     ]
   }
   module {
-    source = "platformod/cloudtrail-s3/aws"
+    source  = "platformod/cloudtrail-s3/aws"
     version = "1.0.1"
   }
 }
