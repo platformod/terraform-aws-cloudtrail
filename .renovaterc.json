@@ -1,5 +1,5 @@
 {
-  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "extends": ["config:best-practices", "helpers:pinGitHubActionDigests"],
   "labels": ["dependencies", "renovatebot"],
   "packageRules": [
     {
@@ -23,7 +23,7 @@
     }
   ],
   "prConcurrentLimit": 2,
-  "platformAutomerge": false,
+  "platformAutomerge": true,
   "automergeSchedule": ["every weekend"],
   "separateMinorPatch": true,
   "timezone": "America/Los_Angeles"
